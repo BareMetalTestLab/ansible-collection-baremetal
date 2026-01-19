@@ -1,14 +1,14 @@
 ---
 
-- name: Check if arm-none-eabi-gcc is already installed
-  command: which arm-none-eabi-gcc
+- name: Check if gcc-arm-none-eabi is already installed
+  command: which gcc-arm-none-eabi
   register: gcc_check
   ignore_errors: true
 
-- name: Install arm-none-eabi-gcc
+- name: Install gcc-arm-none-eabi
   become: true
   package:
-    name: arm-none-eabi-gcc
+    name: gcc-arm-none-eabi
     state: present
   when:
     - (ansible_os_family == 'Debian' or ansible_os_family == 'RedHat')
