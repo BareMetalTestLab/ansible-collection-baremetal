@@ -7,3 +7,5 @@ authors:
 description: 'Ansible collection for baremetal automation'
 license: MIT
 readme: README.md
+
+repository: https://github.com/BareMetalTestLab/ansible-collection-baremetal
