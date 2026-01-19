@@ -1,6 +1,6 @@
 ---
 namespace: baremetal
-name: baremetal
+name: tools
 version: '0.1.0'
 author: 'Paul Firs'
 description: 'Ansible collection for baremetal automation'

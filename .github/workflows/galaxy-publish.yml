@@ -1,0 +1,31 @@
+name: Build and Publish Ansible Collection
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Ansible
+        run: pip install ansible
+
+      - name: Build collection
+        run: ansible-galaxy collection build
+
+      - name: Publish to Ansible Galaxy
+        env:
+          ANSIBLE_GALAXY_API_KEY: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
+        run: |
+          archive=$(ls *.tar.gz | head -n1)
+          ansible-galaxy collection publish "$archive" --api-key "$ANSIBLE_GALAXY_API_KEY"
