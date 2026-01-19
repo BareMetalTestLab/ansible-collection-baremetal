@@ -4,7 +4,4 @@ galaxy_info:
   description: Install SEGGER J-Link tools for baremetal development.
   license: MIT
   min_ansible_version: 2.9
----
 dependencies: []
-
-# Role metadata for install_jlink

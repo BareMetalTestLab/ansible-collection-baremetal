@@ -4,7 +4,4 @@ galaxy_info:
   description: Install the arm-none-eabi-gcc toolchain for baremetal development.
   license: MIT
   min_ansible_version: 2.9
----
 dependencies: []
-
-# Role metadata for install_eabi_arm_gcc
