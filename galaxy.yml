@@ -2,7 +2,8 @@
 namespace: baremetal
 name: tools
 version: '0.1.0'
-author: 'Paul Firs'
+authors:
+	- Paul Firs <makloun1994@gmail.com> (paulfirs.com)
 description: 'Ansible collection for baremetal automation'
 license: MIT
 readme: README.md
