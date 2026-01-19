@@ -1,6 +1,6 @@
 ---
-namespace: baremetal
-name: tools
+namespace: paulfirs
+name: baremetal
 version: '0.1.0'
 authors:
   - Paul Firs <makloun1994@gmail.com> (paulfirs.com)
