@@ -3,14 +3,20 @@
   ansible.builtin.setup:
     filter: ansible_architecture
 
-- name: Set J-Link tarball name based on architecture
+- name: Set J-Link version
   set_fact:
     jlink_version: "V7.94a"
+
+- name: Set J-Link tarball map
+  set_fact:
     jlink_arch_map:
-      x86_64: "JLink_Linux_{{ jlink_version | replace('.', '') }}_x86_64.tgz"
-      aarch64: "JLink_Linux_{{ jlink_version | replace('.', '') }}_arm64.tgz"
-    jlink_tar: "{{ jlink_arch_map[ansible_facts['ansible_architecture']] }}"
-    jlink_url: "https://www.segger.com/downloads/jlink/{{ jlink_arch_map[ansible_facts['ansible_architecture']] }}"
+      x86_64: "JLink_Linux_{{ jlink_version | replace('.', '') }}_x86_64.deb"
+      aarch64: "JLink_Linux_{{ jlink_version | replace('.', '') }}_arm64.deb"
+
+- name: Set J-Link tarball variables
+  set_fact:
+    jlink_deb: "{{ jlink_arch_map[ansible_facts.architecture] }}"
+    jlink_url: "https://www.segger.com/downloads/jlink/{{ jlink_arch_map[ansible_facts.architecture] }}"
     jlink_dest: "/opt/SEGGER/JLink"
 
 - name: Check if JLinkExe already exists
@@ -19,25 +25,29 @@
   register: jlinkexe_stat
 
 - name: Ensure destination directory exists
+  become: true
   file:
     path: "{{ jlink_dest }}"
     state: directory
     mode: '0755'
   when: not jlinkexe_stat.stat.exists
 
-- name: Download SEGGER J-Link tarball
-  get_url:
-    url: "{{ jlink_url }}"
-    dest: "/tmp/{{ jlink_tar }}"
-    mode: '0644'
+- name: Download SEGGER J-Link .deb
+  shell: |
+    wget --post-data "accept_license_agreement=accepted" \
+      {{ jlink_url }} \
+      -O /tmp/{{ jlink_deb }}
   when: not jlinkexe_stat.stat.exists
 
-- name: Extract J-Link to /opt
-  unarchive:
-    src: "/tmp/{{ jlink_tar }}"
-    dest: "{{ jlink_dest }}"
-    remote_src: yes
-    extra_opts: [--strip-components=1]
+- name: Install SEGGER J-Link .deb
+  become: true
+  shell: dpkg --force-depends -i /tmp/{{ jlink_deb }}
+  when: not jlinkexe_stat.stat.exists
+
+- name: Remove J-Link .deb
+  file:
+    path: "/tmp/{{ jlink_deb }}"
+    state: absent
   when: not jlinkexe_stat.stat.exists
 
 - name: Ensure JLinkExe is executable

@@ -1,5 +1,5 @@
 ---
-namespace: paulfirs
+namespace: baremetaltestlab
 name: baremetal
 version: '0.1.2'
 authors:
