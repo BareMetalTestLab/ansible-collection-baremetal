@@ -12,6 +12,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check tag matches galaxy.yml version
+        run: |
+          tag_version="${GITHUB_REF##*/}"
+          # Remove leading 'v' from tag
+          tag_version_no_v="${tag_version#v}"
+          # Extract version from galaxy.yml
+          file_version=$(grep '^version:' galaxy.yml | awk '{print $2}' | tr -d "'")
+          echo "Tag version: $tag_version_no_v"
+          echo "galaxy.yml version: $file_version"
+          if [ "$tag_version_no_v" != "$file_version" ]; then
+            echo "Error: Tag version ($tag_version_no_v) does not match galaxy.yml version ($file_version)."
+            exit 1
+          fi
+          echo "Version check passed."
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
