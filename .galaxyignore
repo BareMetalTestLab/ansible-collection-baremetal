@@ -1,4 +1,2 @@
-# Exclude .deb files from Ansible Galaxy collection build
-exclude:
-  - "*.deb"
-  - "roles/*/files/*.deb"
+*.deb
+roles/*/files/*.deb
