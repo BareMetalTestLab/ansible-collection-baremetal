@@ -1,0 +1,5 @@
+- hosts: all
+  roles:
+    - paulfirs.baremetal.install_eabi_arm_gcc
+    - paulfirs.baremetal.install_jlink
+    - paulfirs.baremetal.install_can_tools

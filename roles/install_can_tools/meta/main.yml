@@ -1,0 +1,7 @@
+galaxy_info:
+  role_name: install_can_tools
+  author: Paul Firs (paulfirs.com)
+  description: Install CAN tools (can-utils, peakcan) and configure kernel modules
+  license: MIT
+  min_ansible_version: 2.9
+dependencies: []

@@ -1,0 +1,71 @@
+---
+
+- name: Install can-utils
+  apt:
+    name: can-utils
+    state: present
+  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Download PEAK Linux driver from quick link
+  get_url:
+    url: https://www.peak-system.com/quick/PCAN-Linux-Driver
+    dest: /tmp/peak-linux-driver-latest.tar.gz
+  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Extract PEAK Linux driver archive
+  unarchive:
+    src: /tmp/peak-linux-driver-latest.tar.gz
+    dest: /tmp/
+    remote_src: yes
+  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Remove PEAK Linux driver archive
+  file:
+    path: /tmp/peak-linux-driver-latest.tar.gz
+    state: absent
+  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install build dependencies for PEAK Linux driver
+  apt:
+    name:
+      - build-essential
+      - "linux-headers-{{ ansible_facts['kernel'] }}"
+      - libpopt-dev
+    state: present
+  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Build and install PEAK Linux driver
+  shell: |
+    cd /tmp/peak-linux-driver-*
+    make clean
+    make
+    make install
+  args:
+    executable: /bin/bash
+  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Add CAN kernel modules to /etc/modules
+  lineinfile:
+    path: /etc/modules
+    line: "{{ item }}"
+    state: present
+  become: yes
+  loop:
+    - can
+    - can-raw
+    - peak_usb
+
+- name: Load CAN kernel modules immediately
+  command: modprobe {{ item }}
+  become: yes
+  loop:
+    - can
+    - can-raw
+    - peak_usb
+  ignore_errors: yes
