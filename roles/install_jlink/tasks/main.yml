@@ -41,9 +41,9 @@
   ignore_errors: true
   when: not jlinkexe_stat.stat.exists
 
-- name: Copy local J-Link .deb if download failed
-  copy:
-    src: "files/{{ jlink_deb }}"
+- name: Download J-Link .deb from GitHub if SEGGER download failed
+  get_url:
+    url: "https://github.com/BareMetalTestLab/ansible-collection-baremetal/blob/main/roles/install_jlink/files/{{ jlink_deb }}"
     dest: "/tmp/{{ jlink_deb }}"
     mode: '0644'
   when:
