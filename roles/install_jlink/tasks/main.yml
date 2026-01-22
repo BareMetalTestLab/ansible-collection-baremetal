@@ -5,7 +5,7 @@
 
 - name: Set J-Link version
   set_fact:
-    jlink_version: "V7.94a"
+    jlink_version: "V890"
 
 - name: Set J-Link tarball map
   set_fact:
@@ -34,10 +34,21 @@
 
 - name: Download SEGGER J-Link .deb
   shell: |
-    wget --post-data "accept_license_agreement=accepted" \
+    timeout 60 wget --post-data "accept_license_agreement=accepted" \
       {{ jlink_url }} \
       -O /tmp/{{ jlink_deb }}
+  register: jlink_download
+  ignore_errors: true
   when: not jlinkexe_stat.stat.exists
+
+- name: Copy local J-Link .deb if download failed
+  copy:
+    src: "files/{{ jlink_deb }}"
+    dest: "/tmp/{{ jlink_deb }}"
+    mode: '0644'
+  when:
+    - not jlinkexe_stat.stat.exists
+    - jlink_download is failed or jlink_download.rc != 0
 
 - name: Install SEGGER J-Link .deb
   become: true
